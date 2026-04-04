@@ -17,4 +17,5 @@ export const RECIPE_ITEMS: readonly RouletteItem[] = [
   { id: "kimchi", name: "キムチ鍋", categoryId: "korean", icon: "🍲" },
   { id: "oyakodon", name: "親子丼", categoryId: "japanese", icon: "🍚" },
   { id: "tonkatsu", name: "とんかつ", categoryId: "japanese", icon: "🐖" },
+  { id: "gyudon", name: "牛丼", categoryId: "japanese", icon: "🍚" },
 ];
