@@ -5,8 +5,8 @@ type PrimaryActionButtonProps = {
 };
 
 const copy = {
-  start: { label: "スタート！", icon: "🎰" },
-  retry: { label: "もう一回！", icon: "🔄" },
+  start: "スタート！",
+  retry: "もう一回！",
 } as const;
 
 export function PrimaryActionButton({
@@ -14,15 +14,14 @@ export function PrimaryActionButton({
   onClick,
   disabled,
 }: PrimaryActionButtonProps) {
-  const { label, icon } = copy[variant];
+  const label = copy[variant];
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="flex h-14 w-full max-w-sm items-center justify-center gap-2 rounded-full bg-orange-500 text-base font-semibold text-white shadow-md transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
+      className="flex h-14 w-full max-w-sm items-center justify-center rounded-full bg-orange-500 text-base font-semibold text-white shadow-md transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
     >
-      <span aria-hidden>{icon}</span>
       {label}
     </button>
   );

@@ -105,9 +105,9 @@ export function SlotReel({
   const isPreview = strip.length === 0 && !showEmpty;
 
   return (
-    <div className="flex w-full flex-col items-center gap-2 px-4">
+    <div className="w-full px-4">
       <div
-        className="relative w-full max-w-sm overflow-hidden rounded-2xl bg-white px-2 shadow-md ring-1 ring-zinc-100"
+        className="relative mx-auto w-full max-w-sm overflow-hidden rounded-2xl bg-white px-2 shadow-md ring-1 ring-zinc-100"
         style={{ height: ROW_PX * VISIBLE_ROWS }}
       >
         {showEmpty ? (
@@ -131,16 +131,13 @@ export function SlotReel({
                 <div
                   key={`${item.id}-${i}`}
                   className={[
-                    "flex items-center gap-2 border-b border-zinc-100 px-3 last:border-b-0",
+                    "flex items-center border-b border-zinc-100 px-3 last:border-b-0",
                     isPreview && i === 1
                       ? "text-base font-semibold text-zinc-900"
                       : "text-sm font-medium text-zinc-500",
                   ].join(" ")}
                   style={{ height: ROW_PX }}
                 >
-                  <span className="text-lg" aria-hidden>
-                    {item.icon}
-                  </span>
                   <span>{item.name}</span>
                 </div>
               ))}
@@ -161,9 +158,6 @@ export function SlotReel({
           </>
         )}
       </div>
-      <span className="text-lg text-red-500" aria-hidden>
-        ▶
-      </span>
     </div>
   );
 }

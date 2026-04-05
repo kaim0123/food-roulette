@@ -30,14 +30,13 @@ export function CategoryChips({
               disabled={disabled}
               onClick={() => onToggle(g.id)}
               className={[
-                "inline-flex items-center gap-1.5 rounded-full border px-3 py-2 text-sm font-medium transition-colors",
+                "inline-flex items-center rounded-full border px-3 py-2 text-sm font-medium transition-colors",
                 isOn
                   ? "border-zinc-900 bg-zinc-900 text-white"
                   : "border-zinc-200 bg-white text-zinc-800",
                 disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
               ].join(" ")}
             >
-              <span aria-hidden>{g.icon}</span>
               {g.label}
             </button>
           );
