@@ -64,6 +64,8 @@ function IconUser({ className }: { className?: string }) {
   );
 }
 
+// ナビゲーション項目の定義。match 関数で「現在のURLがこのタブに対応するか」を判定する
+// startsWith を使うことで、サブページ（/recipe/123 など）でもアクティブになる
 const items = [
   { href: "/recipe", label: "ごはん", Icon: IconBowl, match: (p: string) => p === "/recipe" || p.startsWith("/recipe/") },
   { href: "/foodshop", label: "お店", Icon: IconShop, match: (p: string) => p.startsWith("/foodshop") },
@@ -75,6 +77,9 @@ export default function Footer() {
 
   return (
     <footer
+      // モバイル: 画面下に固定 (fixed bottom-0) + 背景ぼかし (backdrop-blur)
+      // デスクトップ (md:): 通常配置 (static) + ぼかしなし
+      // env(safe-area-inset-bottom): iPhoneのホームバー分の余白を確保
       className={[
         "z-50 border-zinc-200/90 bg-white/85 backdrop-blur-xl",
         "dark:border-zinc-800 dark:bg-zinc-950/90",

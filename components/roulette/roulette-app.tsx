@@ -23,10 +23,16 @@ export function RouletteApp({ config }: RouletteAppProps) {
     copy,
     title,
   } = config;
+  // 設定にデータがあるかどうかで、各フィルターセクションの表示/非表示を決める
+  // レシピ: useMealFormat=true, useAreas=false
+  // お店:   useMealFormat=false, useAreas=true
   const useMealFormat = (mealFormats?.length ?? 0) > 0;
   const useAreas = (areas?.length ?? 0) > 0;
   const useKeywords = (keywordOptions?.length ?? 0) > 0;
 
+  // IDから表示ラベルを引く逆引きマップを作成
+  // 例: { "japanese": "和食", "western": "洋食", ... }
+  // useMemo でキャッシュし、categories が変わらない限り再計算しない
   const categoryLabelById = useMemo(
     () => Object.fromEntries(categories.map((c) => [c.id, c.label])),
     [categories],
@@ -74,26 +80,37 @@ export function RouletteApp({ config }: RouletteAppProps) {
   const [selectedKeywords, setSelectedKeywords] = useState<Set<string>>(
     () => new Set(),
   );
-  const [phase, setPhase] = useState<Phase>("home");
-  const [winner, setWinner] = useState<RouletteItem | null>(null);
+  const [phase, setPhase] = useState<Phase>("home");            // 画面の状態: home → spinning → result
+  const [winner, setWinner] = useState<RouletteItem | null>(null); // 当選した候補
+  // spinToken: 値自体に意味はない。+1するたびにSlotReelのuseEffectが再実行される
+  // （同じ当選者でもアニメーションを再開したいため、tokenで変化を伝える）
   const [spinToken, setSpinToken] = useState(0);
 
+  // 全フィルターを適用した候補リスト。フィルター条件が変わるたびに再計算される
   const candidates = useMemo(() => {
     return items.filter((item) => {
+      // 1) ジャンルフィルター: 選択中のジャンルに含まれるか
       if (!selected.has(item.categoryId)) return false;
+
+      // 2) メインの型フィルター（レシピのみ）
       if (useMealFormat) {
         const mf = item.mealFormatId;
         if (mf == null) return false;
         if (!selectedMealFormats.has(mf)) return false;
       }
+
+      // 3) エリアフィルター（お店のみ）
       if (useAreas) {
         const aid = item.areaId;
         if (aid == null || !selectedAreas.has(aid)) return false;
       }
+
+      // 4) キーワードフィルター（AND条件: 選択した全タグを持つ候補のみ通過）
+      //    キーワード未選択（size=0）の場合はスキップ
       if (useKeywords && selectedKeywords.size > 0) {
         const tags = item.keywordIds ?? [];
         for (const kw of selectedKeywords) {
-          if (!tags.includes(kw)) return false;
+          if (!tags.includes(kw)) return false; // 1つでも欠けたら除外
         }
       }
       return true;
@@ -109,11 +126,14 @@ export function RouletteApp({ config }: RouletteAppProps) {
     selectedKeywords,
   ]);
 
+  // カテゴリのトグル処理。Set をイミュータブル（不変）に更新する
+  // prev をコピーしてから変更 → React が「新しいオブジェクト」と認識して再描画する
+  // ※ 直接 prev.add() すると同じ参照のままなので再描画されない
   const toggleCategory = useCallback((id: string) => {
     setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(id)) {
-        if (next.size <= 1) return prev;
+        if (next.size <= 1) return prev; // 最後の1つは解除不可（候補0件を防ぐ）
         next.delete(id);
       } else {
         next.add(id);
